@@ -43,7 +43,7 @@ const createUser = async (req, res) => {
 
 const getAuthToken = async (req, res) => {
   const { name, password } = req.body;
-  console.log(req.body)
+  console.log(req.body);
 
   const nameCheck = await prisma.User.findUnique({
     where: {
@@ -51,7 +51,7 @@ const getAuthToken = async (req, res) => {
     },
   });
 
-  console.log(nameCheck, req.body)
+  console.log(nameCheck, req.body);
 
   if (nameCheck) {
     if (bcrypt.compareSync(password, nameCheck.password)) {
