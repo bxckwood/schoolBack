@@ -8,10 +8,17 @@ datasource db {
 }
 
 model User {
-    id       Int     @id @default(autoincrement())
-    password String
-    name     String? @unique
-    email    String  @unique
-    inGroup  Boolean
-    groupId  Int
+    id          Int     @id @default(autoincrement())
+    password    String
+    name        String? @unique
+    email       String  @unique
+    group       Group?
+    invitations Int[]
+}
+
+model Group {
+    groupId   Int  @id @default(autoincrement())
+    creatorId Int  @unique
+    creator   User @relation(fields: [creatorId], references: [id])
+    coUser    Int
 }

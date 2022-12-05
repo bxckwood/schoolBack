@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const userRouter = require("./src/routes/userRoutes");
+const groupRouter = require("./src/routes/groupRoutes");
 const { Server } = require("socket.io");
 const { createServer } = require("http");
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/api/user", userRouter);
+app.use("/api/group", groupRouter);
 
 const httpServer = createServer();
 

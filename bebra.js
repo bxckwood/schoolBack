@@ -1,8 +1,5 @@
-const { io } = require("socket.io-client");
+const words = [1, 2, 3, 4, 5, 6];
 
-const socket = io("http://localhost:5555");
+const result = words.filter((word) => word != 6);
 
-socket.on("hello", (arg, callback) => {
-  console.log(arg); // "world"
-  callback("got it");
-});
+console.log(result);

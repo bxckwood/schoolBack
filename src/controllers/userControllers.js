@@ -27,8 +27,6 @@ const createUser = async (req, res) => {
         email,
         password,
         name,
-        inGroup: false,
-        groupId: 0,
       },
     });
     return res.status(200).json(user);
@@ -57,7 +55,7 @@ const getAuthToken = async (req, res) => {
     if (bcrypt.compareSync(password, nameCheck.password)) {
       const token = JWT.sign(
         {
-          name: nameCheck.email,
+          name: nameCheck.name,
           id: nameCheck.id,
         },
         keys.jwt,
@@ -66,6 +64,7 @@ const getAuthToken = async (req, res) => {
 
       res.status(200).json({
         token: token,
+        name: name,
       });
     } else {
       res.status(405).send("Введен неверный пароль");
