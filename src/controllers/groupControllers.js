@@ -41,6 +41,16 @@ const addGroup = async (req, res) => {
     },
   });
 
+  const groupName = await prisma.Group.findUnique({
+    where: {
+      creatorId: user.id,
+    },
+  });
+
+  if (groupName) {
+    return res.status(200).json("Этот участник уже в группе");
+  }
+
   if (!user) {
     console.log(123);
     return res.status(200).json("Такого пользователя нет");
@@ -192,13 +202,66 @@ const infoAboutGroup = async (req, res) => {
     where: { creatorId: id },
   });
 
+  var coUserNickname = 0;
+
+  if (groupesInLeader[0]?.coUser > 0) {
+    coUserNickname = await prisma.User.findUnique({
+      where: {
+        id: groupesInLeader[0].coUser,
+      },
+    });
+  }
+
   const groupInfo = {
     coUser: groupesInCoUser.length > 0 ? true : false,
     leader: groupesInLeader.length > 0 ? true : false,
+    coUserId: groupesInLeader.length > 0 ? groupesInLeader[0].coUser : 0,
+    coUserNickname: coUserNickname.name ? coUserNickname.name : 0,
   };
 
-  console.log(groupesInCoUser, groupesInLeader);
   res.status(200).json(groupInfo);
+};
+
+const leaveGroup = async (req, res) => {
+  const { jwtToken } = req.body;
+
+  var decodedJwt = JWT.verify(jwtToken, keys.jwt);
+
+  const group = await prisma.Group.findMany({
+    where: {
+      coUser: decodedJwt.id,
+    },
+  });
+
+  await prisma.Group.update({
+    where: { groupId: group[0].groupId },
+    data: { coUser: 0 },
+  });
+
+  res.status(200).json("Вы вышли из группы");
+};
+
+const kickGroup = async (req, res) => {
+  const { jwtToken } = req.body;
+
+  var decodedJwt = JWT.verify(jwtToken, keys.jwt);
+
+  const { groupId } = await prisma.Group.findMany({
+    where: {
+      creatorId: decodedJwt.id,
+    },
+  }).then((res) => res[0]);
+
+  await prisma.Group.update({
+    where: {
+      groupId: groupId,
+    },
+    data: {
+      coUser: 0,
+    },
+  });
+
+  res.status(200).json("Вы кикнули участника из группа");
 };
 
 module.exports = {
@@ -209,4 +272,6 @@ module.exports = {
   declineGroup: declineGroup,
   deleteGroup: deleteGroup,
   infoAboutGroup: infoAboutGroup,
+  leaveGroup: leaveGroup,
+  kickGroup: kickGroup,
 };

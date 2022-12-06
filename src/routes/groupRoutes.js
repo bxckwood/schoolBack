@@ -8,6 +8,8 @@ const {
   declineGroup,
   deleteGroup,
   infoAboutGroup,
+  leaveGroup,
+  kickGroup,
 } = require("../controllers/groupControllers");
 
 groupRouter.post("/create", (req, res) => {
@@ -61,6 +63,22 @@ groupRouter.post("/delete", (req, res) => {
 groupRouter.post("/info", (req, res) => {
   try {
     infoAboutGroup(req, res);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+groupRouter.post("/leave", (req, res) => {
+  try {
+    leaveGroup(req, res);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+groupRouter.post("/kick", (req, res) => {
+  try {
+    kickGroup(req, res);
   } catch (e) {
     console.log(e);
   }
